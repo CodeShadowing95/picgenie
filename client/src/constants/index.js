@@ -45,4 +45,12 @@ export const surpriseMePrompts = [
   'Synthwave aeroplane',
   'A man wanders through the rainy streets of Tokyo, with bright neon signs, 50mm',
   'A Space Shuttle flying above Cape Town, digital art',
+  'A majestic dragon soaring through a celestial storm, its scales shimmering with lightning',
+  'A futuristic cityscape with holographic billboards and flying cars in a neon-lit night',
+  'An enchanted forest with glowing mushrooms, where fairies dance under a starry sky',
+  'A surreal underwater world where jellyfish swim amidst colorful coral reefs and sunken ships',
+  'A time-lapse image of a flower blooming, its petals unfurling with vibrant colors',
+  'A robotic orchestra performing on a stage, each member playing an instrument made of gears',
+  'An abstract representation of sound waves merging with vibrant, swirling colors',
+  'A peaceful countryside scene with rolling hills, grazing sheep, and a vibrant rainbow',
 ];
