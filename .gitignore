@@ -1,2 +1,8 @@
+# remove node_modules
+/server/node_modules
+
 # To send the changes to git repo
 /push
+
+# MongoDB credentials
+/server/.env
