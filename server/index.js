@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 
 import connectDB from './mongodb/connect.js';
+import postRoutes from './routes/postRoutes.js';
+import dalleRoutes from './routes/dalleRoutes.js';
 
 /* `dotenv.config();` loads environment variables from a `.env` file into `process.env`. This allows
 sensitive information such as API keys, database credentials, and other configuration options to be
@@ -27,6 +29,9 @@ option sets the maximum size of the JSON payload that can be parsed to 50 megaby
 when dealing with large JSON payloads, such as when uploading files or sending large amounts of
 data. */
 app.use(express.json({ limit: '50mb' }));
+
+app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/dalle', dalleRoutes);
 
 /* `app.get('/', async (req, res) => { res.send('Hello World!'); })` is defining a route for the
 Express application. The route is set up to handle GET requests to the root URL of the application
