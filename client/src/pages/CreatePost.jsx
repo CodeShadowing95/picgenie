@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { preview } from '../assets';
@@ -15,8 +15,31 @@ const CreatePost = () => {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-  
+  const shareBtnClassName = (form.prompt && form.photo) ? 'mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center': 'mt-3 text-white bg-[#ccceff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center'
+  const generateBtnClassName = (form.prompt) ? 'text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center' : 'text-white bg-green-300 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center'
+  const disabled = (form.prompt) ? false : true;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form)
+      })
+
+      await response.json();
+      navigate('/');
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
   }
   
   const handleChange = (e) => {
@@ -33,8 +56,44 @@ const CreatePost = () => {
     setForm({ ...form, prompt: randomPrompt });
   }
   
-  const generateImage = () => {
-  
+  const generateImage = async () => {
+    // If prompt field is not empty
+    if(form.prompt) {
+      try {
+        // Display loading indicator on the image field
+        setGeneratingImg(true);
+        
+        /* This code is making a POST request to the URL 'http://localhost:8080/api/v1/dalle' with a
+        JSON payload containing the value of the `prompt` field in the `form` state. The `await`
+        keyword is used to wait for the response from the server before continuing execution. The
+        response from the server is stored in the `response` variable. */
+        const response = await fetch('http://localhost:8080/api/v1/dalle', {
+          /* `method: 'POST',` is setting the HTTP request method to POST. This means that the request
+          is intended to create a new resource on the server, and the data to create that resource
+          is included in the request body. In this case, the request body is a JSON payload
+          containing the value of the `prompt` field in the `form` state. */
+          method: 'POST',
+          /* `headers: {'Content-Type': 'application/json'}` is setting the content type of the request
+          to JSON. This is necessary because the request body is being sent as a JSON payload. By
+          setting the content type to JSON, the server knows to expect a JSON payload in the request
+          body and can parse it accordingly. */
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: form.prompt }),
+        })
+
+        const data = await response.json();
+
+        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}`})
+      } catch (error) {
+        alert(error);
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert('Enter a prompt to generate');
+    }
   }
 
   return (
@@ -44,7 +103,7 @@ const CreatePost = () => {
         <p className="mt-2 text-[#666e75] text-[16px] max-w[500px]">Create imaginative and visually stunning images through DALL-E AI and share them with the community </p>
       </div>
 
-      <form className="mt-16 max-w-3xl" onClick={handleSubmit}>
+      <form className="mt-16 max-w-3xl" onClick={(form.prompt && form.photo) ? handleSubmit : null}>
         <div className="flex flex-col gap-5">
           <FormField
             labelName="Your Name"
@@ -92,7 +151,8 @@ const CreatePost = () => {
           <button
             type="button"
             onClick={generateImage}
-            className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            className={generateBtnClassName}
+            disabled={disabled}
           >
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
@@ -102,7 +162,8 @@ const CreatePost = () => {
           <p className="mt-2 text-[#666e75] text-[14px]">Once you have created the image you want, you can share it with others in the community.</p>
           <button
             type="submit"
-            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            className={shareBtnClassName}
+            disabled={disabled}
           >
             {loading ? "Sharing..." : "Share with the community"}
           </button>
